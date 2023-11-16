@@ -21,10 +21,10 @@ yargs(hideBin(process.argv))
       if (argv.verbose) console.info(`start server on :${argv.port}`);
       amount = argv.amount ? argv.amount : 10000;
       currency = argv.currency ? argv.currency : 'zar';
-      merchantCode = argv.merchantCode ? argv.merchantCode : '5463';
-      merchantName = argv.merchantName ? argv.merchantName : 'The Coders Bakery';
-      merchantCity = argv.merchantCity ? argv.merchantCity : 'Cape Town';
-      merchantCountry = argv.merchantCountry ? argv.merchantCountry : 'ZA';
+      merchantCode = argv.mcc ? argv.mcc : '5463';
+      merchantName = argv.merchant ? argv.merchant : 'The Coders Bakery';
+      merchantCity = argv.city ? argv.city : 'Cape Town';
+      merchantCountry = argv.country ? argv.country : 'ZA';
 
       template = argv.template;
     }
