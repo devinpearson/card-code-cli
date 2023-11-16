@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "bin/index.js",
   "bin": {
-    "hello": "./bin/index.js"
+    "card-emu": "./bin/index.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
