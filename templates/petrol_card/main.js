@@ -2,7 +2,7 @@
 //5499 : "Miscellaneous Food Stores - Convenience Stores and Specialty Markets"
 //5541 : "Service Stations"
 //5172 : "Petroleum and Petroleum Products"
-//5542 : "Automated Fuel Dispensers"av
+//5542 : "Automated Fuel Dispensers"
 const fuelCodes = ['5499', '5541', '5172', '5542'];
 
 const beforeTransaction = async (authorization) => {

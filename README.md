@@ -18,6 +18,7 @@ Current Templates:
 - `petrol_card` - A template for a petrol card
 - `rooty` - A template for a sending a slack message after a transaction
 - `telegram` - A template for sending a telegram message after a transaction
+- `postman-echo` - A template for sending a transaction to [Postman Echo](https://learning.postman.com/docs/developer/echo-api/)
 
 ### Installation
 
