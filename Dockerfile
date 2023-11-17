@@ -1,5 +1,5 @@
 # Base image of the docker container
-FROM node:latest
+FROM node:20-alpine
 # Copy the contents of the repo into the /app folder inside the container
 COPY . /app
 # Update the current working directory to the /app folder
