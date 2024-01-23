@@ -5,8 +5,9 @@ var fs = require('fs');
 var path = require('path');
 var emu = require('programmable-card-code-emulator');
 const chalk = require('chalk');
+const { hideBin } = require('yargs/helpers');
 
-var argv = require('yargs/yargs')(process.argv.slice(2))
+var argv = require('yargs/yargs')(hideBin(process.argv))
   .usage('Usage: $0 [options]')
   .option('template', {
     alias: 't',
