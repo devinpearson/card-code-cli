@@ -6,7 +6,7 @@
     "card-emu": "./bin/index.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "prettier:check": "prettier --check .",
     "prettier:fix": "prettier --write ."
   },
@@ -28,6 +28,7 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
     "prettier": "3.0.3"
   }
 }
