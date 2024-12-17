@@ -4,6 +4,20 @@ Write and test programmable card code in a safe environment.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+## Table of Contents
+- [About](#about)
+- [Templates](#templates)
+- [Installation](#installation)
+- [DevContainer (VSCode)](#devcontainer-vscode)
+- [Docker](#docker)
+- [Usage](#usage)
+- [Testing](#testing)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+- [Acknowledgments](#acknowledgments)
+- [Other Projects](#other-projects)
+
 ## About
 
 While exploring Programmable Banking Cards, I found it difficult to test my code. I wanted to be able to write code and test it in a safe environment. I also wanted to be able to share my code with others. This project is an attempt to solve these problems.
@@ -20,12 +34,34 @@ Current Templates:
 - `telegram` - A template for sending a telegram message after a transaction
 - `postman-echo` - A template for sending a transaction to [Postman Echo](https://learning.postman.com/docs/developer/echo-api/)
 
-### Installation
+## Installation
+Before installing, [download and install Node.js](https://nodejs.org/en/download/).
 
-If running from source, install the dependencies with:
-
+```bash
+git clone https://github.com/devinpearson/programmable-banking-card-issuer.git
+cd programmable-banking-card-issuer
 ```
-npm i
+```bash
+npm install
+```
+## DevContainer (VSCode)
+VS Code will automatically detect the `.devcontainer` folder and prompt you to open the project in a container. This will set up the environment for you to run the server in a Docker container. 
+```bash
+docker-compose -f .devcontainer/docker-compose.yml up
+```
+
+## Docker
+    
+```bash
+docker build -t card-emu .
+docker run card-emu -t petrol_card
+```
+![](./media/docker-example.gif)
+
+## Usage
+
+```bash
+npm run dev
 ```
 
 ### Usage
@@ -57,16 +93,34 @@ To run a transaction against a template, run the following command:
 ```
 node . -t empty --amount 60000 --currency ZAR --mcc 0000 --merchant "Test Merchant" --city "Test City" --country ZA
 ```
+## Testing
 
-If you want to run the emulator in a docker container, run the following commands:
-
+To run the tests, use the following command:
+```bash
+npm test
 ```
-docker build -t card-emu .
-docker run card-emu -t petrol_card
-```
+## Contributing
 
-![](./media/docker-example.gif)
+Contributions are welcome! Please submit a pull request or open an issue for any suggestions or improvements.
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+## Contact
+
+For inquiries, please open an issue.
+
+## Acknowledgments
+
+- [Yargs](https://yargs.js.org/)
+- [Chalk](https://github.com/chalk/chalk)
+
+## Other Projects
+- [Banking API Simulator](https://github.com/devinpearson/programmable-banking-sim)
+- [Random banking data generator](https://github.com/devinpearson/programmable-banking-faker)
+- [Open Banking Point of Sales device](https://github.com/devinpearson/programmable-banking-pos)
+- [Card Issuer](m/devinpearson/programmable-banking-card-issuer)
+- [A blockly editor for card code](https://github.com/devinpearson/investec-blockly)
+- [A HTTP server for using the card code emulator](https://github.com/devinpearson/investec-card-server)
+- [The card code emulator package](https://github.com/devinpearson/programmable-card-code-emulator)
