@@ -1,0 +1,8 @@
+[submodule "templates/investec-swipe-n-save"]
+	path = templates/investec-swipe-n-save
+	url = https://github.com/petersmythe/investec-swipe-n-save
+	branch = main
+[submodule "templates/budget-breeze"]
+	path = templates/budget-breeze
+	url = https://github.com/Investec-Developer-Community/budget-breeze
+	branch = main
