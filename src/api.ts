@@ -5,9 +5,14 @@ interface AuthResponse {
         expires_in: number
         scope: string
 }
+const createEndpoint = (host: string, path: string) => new URL(path, host).toString();
+
 export async function getAccessToken(host: string, clientId: string, secret: string, apikey: string) {
-    const response = await fetch(
-    path.join(host, '/identity/v2/oauth2/token'), {
+    if (!clientId || !host || !secret || !apikey) {
+        throw new Error('Missing required parameters');
+    }
+    const endpoint = createEndpoint(host, `/identity/v2/oauth2/token`);
+    const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
             "Authorization": "Basic " + Buffer.from(clientId + ':' + secret).toString('base64'),
@@ -25,8 +30,11 @@ export async function getAccessToken(host: string, clientId: string, secret: str
 };
 
 export async function uploadEnv(cardkey: number, env: string, host: string, token: string) {
-    const response = await fetch(
-    path.join(host, '/za/v1/cards/',cardkey.toString(),'/environmentvariables'), {
+    if (!cardkey || !env || !host || !token) {
+        throw new Error('Missing required parameters');
+    }
+    const endpoint = createEndpoint(host, `/za/v1/cards/${encodeURIComponent(cardkey.toString())}/environmentvariables`);
+    const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
             "Authorization": "Bearer " + token,
@@ -53,8 +61,11 @@ interface UploadCodeResponse {
 }
 
 export async function uploadCode(cardkey: number, code: object, host: string, token: string): Promise<UploadCodeResponse> {
-    const response = await fetch(
-    path.join(host, '/za/v1/cards/', cardkey.toString(), '/code'), {
+    if (!cardkey || !code || !host || !token) {
+        throw new Error('Missing required parameters');
+    }
+    const endpoint = createEndpoint(host, `/za/v1/cards/${encodeURIComponent(cardkey.toString())}/code`);
+    const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
             "Authorization": "Bearer " + token,
@@ -88,8 +99,11 @@ interface CardResponse{
     }
 }
 export async function fetchCards(host: string, token: string) {
-    const response = await fetch(
-    path.join(host, '/za/v1/cards'), {
+    if (!host || !token) {
+        throw new Error('Missing required parameters');
+    }
+    const endpoint = createEndpoint(host, `/za/v1/cards`);
+    const response = await fetch(endpoint, {
         method: 'GET',
         headers: {
             "Authorization": "Bearer " + token,
@@ -117,8 +131,11 @@ interface EnvResponse {
 }
 
 export async function fetchEnv(cardkey: number, host: string, token: string) {
-    const response = await fetch(
-    path.join(host, '/za/v1/cards/',cardkey.toString(),'/environmentvariables'), {
+    if (!cardkey || !host || !token) {
+        throw new Error('Missing required parameters');
+    }
+    const endpoint = createEndpoint(host, `/za/v1/cards/${encodeURIComponent(cardkey.toString())}/environmentvariables`);
+    const response = await fetch(endpoint, {
         method: 'GET',
         headers: {
             "Authorization": "Bearer " + token,
@@ -143,8 +160,11 @@ interface CodeResponse {
     }
 }
 export async function fetchCode(cardkey: number, host: string, token: string) {
-    const response = await fetch(
-    path.join(host, '/za/v1/cards/',cardkey.toString(),'/code'), {
+    if (!cardkey || !host || !token) {
+        throw new Error('Missing required parameters');
+    }
+    const endpoint = createEndpoint(host, `/za/v1/cards/${encodeURIComponent(cardkey.toString())}/code`);
+    const response = await fetch(endpoint, {
         method: 'GET',
         headers: {
             "Authorization": "Bearer " + token,
