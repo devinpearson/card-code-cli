@@ -58,13 +58,14 @@ docker run card-emu -t petrol_card
 ```
 ![](./media/docker-example.gif)
 
-## Usage
-
-```bash
-npm run dev
-```
-
 ### Usage
+Commands:
+    run                              run your code locally
+    fetch-cards                      List cards
+    fetch [cardkey] [filename]       fetches your code
+    fetch-env [cardkey] [filename]   fetches your environmental variables
+    upload [cardkey] [filename]      pushes your code
+    upload-env [cardkey] [filename]  pushes your environmental variables
 
 ![](./media/card-code-example.gif)
 

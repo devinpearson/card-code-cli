@@ -6,9 +6,6 @@ var path = require('path');
 var emu = require('programmable-card-code-emulator');
 const chalk = require('chalk');
 const { hideBin } = require('yargs/helpers');
-const settings = {
-    token: '',
-}
 const { getAccessToken, fetchCode, uploadCode, fetchEnv, uploadEnv, fetchCards} = require('../src/api.js');
 
 var argv = require('yargs/yargs')(hideBin(process.argv))
@@ -62,11 +59,17 @@ var argv = require('yargs/yargs')(hideBin(process.argv))
     runTemplate(argv)
   })
   .command('fetch-cards', 'List cards', (yargs) => {
-  }, function (argv) {
-    console.log('fetching cards');
-    fetchCards(process.env.host, settings.token).then((result) => {
+  }, async function (argv) {
+    try {
+
+        console.log(path.join(__dirname, '..'));
+        const token = await getAccessToken(process.env.host, process.env.clientId, process.env.secret, process.env.apikey)
+        console.log('fetching cards');
+        const result = await fetchCards(process.env.host, token)
         console.table(result);
-    })
+    } catch (err) {
+        console.log(chalk.red(err.message));
+    }
   })
   .command('fetch [cardkey] [filename]', 'fetches your code', (yargs) => {
     yargs.positional('cardkey', {
@@ -79,16 +82,16 @@ var argv = require('yargs/yargs')(hideBin(process.argv))
         default: 'data/main.js',
         describe: 'the filename'
       })
-  }, function (argv) {
-    console.log('fetching code');
-    fetchCode(argv.cardkey, argv.filename, process.env.host, settings.token).then((result) => {
+  }, async function (argv) {
+    try {
+        const token = await getAccessToken(process.env.host, process.env.clientId, process.env.secret, process.env.apikey)
+        console.log('fetching code');
+        const result = await fetchCode(argv.cardkey, process.env.host, token)
         console.log(result);
-        try {
-            fs.writeFileSync(argv.filename, result);
-          } catch (err) {
-            console.log(err);
-          }
-    })
+        await fs.writeFileSync(argv.filename, result);
+    } catch (err) {
+        console.log(chalk.red(err.message));
+    }
   })
   .command('fetch-env [cardkey] [filename]', 'fetches your environmental variables', (yargs) => {
     yargs.positional('cardkey', {
@@ -101,16 +104,16 @@ var argv = require('yargs/yargs')(hideBin(process.argv))
         default: 'data/env.json',
         describe: 'the filename'
       })
-  }, function (argv) {
-    console.log('fetching envs');
-    fetchEnv(argv.cardkey, argv.filename, process.env.host, settings.token).then((result) => {
+  }, async function (argv) {
+    try {
+        const token = await getAccessToken(process.env.host, process.env.clientId, process.env.secret, process.env.apikey)
+        console.log('fetching envs');
+        const result = await fetchEnv(argv.cardkey, process.env.host, token)
         console.log(result);
-        try {
-            fs.writeFileSync(argv.filename, JSON.stringify(result));
-        } catch (err) {
-        console.log(err);
-        }
-    })
+        fs.writeFileSync(argv.filename, JSON.stringify(result));
+    } catch (err) {
+        console.log(chalk.red(err.message));
+    }
   })
   .command('upload [cardkey] [filename]', 'pushes your code', (yargs) => {
     yargs.positional('cardkey', {
@@ -123,14 +126,18 @@ var argv = require('yargs/yargs')(hideBin(process.argv))
         default: 'data/main.js',
         describe: 'the filename'
       })
-  }, function (argv) {
-    console.log('uploading code');
-    const raw = {"code": ""}
-    const code = fs.readFileSync(argv.filename).toString();
-    raw.code = code;
-    uploadCode(argv.cardkey, raw, process.env.host, settings.token).then((result) => {
+  }, async function (argv) {
+    try {
+        const token = await getAccessToken(process.env.host, process.env.clientId, process.env.secret, process.env.apikey)
+        console.log('uploading code');
+        const raw = {"code": ""}
+        const code = fs.readFileSync(argv.filename).toString();
+        raw.code = code;
+        const result = await uploadCode(argv.cardkey, raw, process.env.host, token)
         console.log(result);
-    })
+    } catch (err) {
+        console.log(chalk.red(err.message));
+    }
   })
   .command('upload-env [cardkey] [filename]', 'pushes your environmental variables', (yargs) => {
     yargs.positional('cardkey', {
@@ -143,14 +150,18 @@ var argv = require('yargs/yargs')(hideBin(process.argv))
         default: 'data/env.json',
         describe: 'the filename'
       })
-  }, function (argv) {
-    console.log('uploading env');
-    const raw = {"variables": {}}
-    const variables = fs.readFileSync(argv.filename);
-    raw.variables = JSON.parse(variables);
-    uploadEnv(argv.cardkey, raw, process.env.host, settings.token).then((result) => {
+  }, async function (argv) {
+    try {
+        const token = await getAccessToken(process.env.host, process.env.clientId, process.env.secret, process.env.apikey)
+        console.log('uploading env');
+        const raw = {"variables": {}}
+        const variables = fs.readFileSync(argv.filename);
+        raw.variables = JSON.parse(variables);
+        const result = await uploadEnv(argv.cardkey, raw, process.env.host, token)
         console.log(result);
-    })
+    } catch (err) {
+        console.log(chalk.red(err.message));
+    }
   })
   .help('h')
   .alias('h', 'help')
@@ -158,12 +169,6 @@ var argv = require('yargs/yargs')(hideBin(process.argv))
 
 (async () => {
     // const token = getAccessToken(process.env.host, process.env.clientId, process.env.secret, process.env.apiKey);
-    // try {
-    //     settings.token = token
-    //     fs.writeFileSync('data/settings.json', JSON.stringify(settings));
-    // } catch (err) {
-    //     console.log(err);
-    // }
 })();
 
 async function runTemplate(argv) {
