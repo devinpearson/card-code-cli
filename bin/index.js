@@ -152,6 +152,10 @@ var argv = require('yargs/yargs')(hideBin(process.argv))
       })
   }, async function (argv) {
     try {
+        // check that file exists
+        if (!fs.existsSync(argv.filename)) {
+            throw new Error('File does not exist');
+        }
         const token = await getAccessToken(process.env.host, process.env.clientId, process.env.secret, process.env.apikey)
         console.log('uploading env');
         const raw = {"variables": {}}

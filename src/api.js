@@ -1,4 +1,3 @@
-var fs = require('fs');
 var path = require('path');
 
 async function getAccessToken(host, clientId, secret, apikey) {
@@ -91,7 +90,7 @@ async function fetchEnv(cardkey, host, token) {
         }
         throw new Error(response.statusText);
     }
-    result = await response.json();
+    const result = await response.json();
     return result.data.result.variables;
 }
 
@@ -110,7 +109,7 @@ async function fetchCode(cardkey, host, token) {
         }
         throw new Error(response.statusText);
     }
-    result = await response.json();
+    const result = await response.json();
     return result.data.cardCode.code;
 }
 
