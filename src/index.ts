@@ -17,11 +17,17 @@ const apikey = process.env.apikey || '';
 yargs(hideBin(process.argv))
   //.usage('Usage: $0 [options]')
   .usage('$0 <cmd> [args]')
-  .command('run', 'run your code locally', (yargs) => {
-    yargs.positional('template', {
-        alias: 't',
-        describe: 'template to run',
-        default: 'empty',
+  .command('run [filename]', 'run your code locally', (yargs) => {
+    yargs.positional('filename', {
+        alias: 'f',
+        describe: 'file to run',
+        default: 'main.js',
+        type: 'string',
+      })
+      .positional('environment', {
+        alias: 'e',
+        describe: 'env to run',
+        default: 'env.json',
         type: 'string',
       })
       .positional('amount', {
@@ -37,7 +43,6 @@ yargs(hideBin(process.argv))
         type: 'string',
       })
       .positional('mcc', {
-        alias: 'e',
         describe: 'merchant category code',
         default: '0000',
         type: 'string',
@@ -61,7 +66,7 @@ yargs(hideBin(process.argv))
         type: 'string',
       })
   }, function (argv) {
-    console.log(argv)
+    // console.log(argv)
     runTemplate(argv)
   })
   .command('fetch-cards', 'List cards', (yargs) => {
@@ -217,10 +222,19 @@ yargs(hideBin(process.argv))
 (async () => {
     // const token = getAccessToken(process.env.host, process.env.clientId, process.env.secret, process.env.apiKey);
 })();
-
+interface RunTemplate {
+    filename: string;
+    environment: string;
+    amount: number;
+    currency: string;
+    mcc: string;
+    merchant: string;
+    city: string;
+    country: string;
+}
 async function runTemplate(argv: any) {
-    const template = argv.template;
-const templatePath = path.join(path.resolve(), 'templates', template);
+    const template = argv.filename;
+const templatePath = path.join(path.resolve(), template);
 if (!fs.existsSync(templatePath)) {
   // The template doesnt exist, process exit
   console.log(chalk.red(`Template ${template} does not exist`));
@@ -243,7 +257,7 @@ if (!fs.existsSync(templatePath)) {
   console.log(chalk.blue(`merchant country:`), chalk.green(transaction.merchant.country.code));
   // Read the template env.json file and replace the values with the process.env values
   let environmentvariables = JSON.parse(
-    fs.readFileSync(path.join(templatePath, 'env.json'), 'utf8')
+    fs.readFileSync(path.join(path.resolve(), argv.environment), 'utf8')
   );
   for (const key in environmentvariables) {
     if (`${key}` in process.env) {
@@ -252,7 +266,7 @@ if (!fs.existsSync(templatePath)) {
   }
   // Convert the environmentvariables to a string
   environmentvariables = JSON.stringify(environmentvariables);
-  const code = fs.readFileSync(path.join(templatePath, 'main.js'), 'utf8');
+  const code = fs.readFileSync(path.join(path.resolve(), argv.filename), 'utf8');
   // Run the code
   const executionItems = await run(transaction, code, environmentvariables);
   executionItems.forEach((item) => {

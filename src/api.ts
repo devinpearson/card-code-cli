@@ -102,10 +102,13 @@ export async function fetchCards(host: string, token: string) {
     const result = await response.json() as CardResponse;
     return result.data.cards;
 }
+interface EnvVars {
+    [key: string]: string
+}
 interface EnvResponse {
     "data": {
         "result": {
-            "variables": {},
+            "variables": [EnvVars],
             "createdAt": string,
             "updatedAt": string,
             "error": null
