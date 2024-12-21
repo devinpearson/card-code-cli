@@ -1,6 +1,11 @@
-var path = require('path');
-
-async function getAccessToken(host, clientId, secret, apikey) {
+import path from 'path'
+interface AuthResponse {
+        access_token: string,
+        token_type: string
+        expires_in: number
+        scope: string
+}
+export async function getAccessToken(host: string, clientId: string, secret: string, apikey: string) {
     const response = await fetch(
     path.join(host, '/identity/v2/oauth2/token'), {
         method: 'POST',
@@ -15,11 +20,11 @@ async function getAccessToken(host, clientId, secret, apikey) {
     if (response.status !== 200) {
         throw new Error(response.statusText);
     }
-    const token = (await response.json()).access_token;
-    return token;
+    const result = await response.json() as AuthResponse;
+    return result.access_token;
 };
 
-async function uploadEnv(cardkey, env, host, token) {
+export async function uploadEnv(cardkey: number, env: string, host: string, token: string) {
     const response = await fetch(
     path.join(host, '/za/v1/cards/',cardkey.toString(),'/environmentvariables'), {
         method: 'POST',
@@ -27,7 +32,7 @@ async function uploadEnv(cardkey, env, host, token) {
             "Authorization": "Bearer " + token,
             "content-type": "application/json"
         },
-        body: JSON.stringify(env),
+        body: env,
     });
     if (response.status !== 200) {
         if (response.status === 404) {
@@ -35,13 +40,21 @@ async function uploadEnv(cardkey, env, host, token) {
         }
         throw new Error(response.statusText);
     }
-    const result = await response.json();
+    const result = await response.json() as EnvResponse;
     return result;
 }
 
-async function uploadCode(cardkey, code, host, token) {
+interface UploadCodeResponse {
+    data: {
+        cardCode: {
+            code: string;
+        };
+    };
+}
+
+export async function uploadCode(cardkey: number, code: object, host: string, token: string): Promise<UploadCodeResponse> {
     const response = await fetch(
-    path.join(host, '/za/v1/cards/',cardkey.toString(),'/code'), {
+    path.join(host, '/za/v1/cards/', cardkey.toString(), '/code'), {
         method: 'POST',
         headers: {
             "Authorization": "Bearer " + token,
@@ -55,11 +68,26 @@ async function uploadCode(cardkey, code, host, token) {
         }
         throw new Error(response.statusText);
     }
-    const result = await response.json();
+    const result: UploadCodeResponse = await response.json() as CodeResponse;
     return result;
 }
-
-async function fetchCards(host, token) {
+interface Card {
+    "CardKey": number
+    "CardNumber": string
+    "IsProgrammable": boolean
+    "status": string
+    "CardTypeCode": string
+    "AccountNumber": string
+    "AccountId": string
+}
+interface CardResponse{
+    "data": {
+        "cards": [
+            Card
+        ]
+    }
+}
+export async function fetchCards(host: string, token: string) {
     const response = await fetch(
     path.join(host, '/za/v1/cards'), {
         method: 'GET',
@@ -71,11 +99,21 @@ async function fetchCards(host, token) {
     if (response.status !== 200) {
         throw new Error(response.statusText);
     }
-    const result = await response.json()
+    const result = await response.json() as CardResponse;
     return result.data.cards;
 }
+interface EnvResponse {
+    "data": {
+        "result": {
+            "variables": {},
+            "createdAt": string,
+            "updatedAt": string,
+            "error": null
+        }
+    }
+}
 
-async function fetchEnv(cardkey, host, token) {
+export async function fetchEnv(cardkey: number, host: string, token: string) {
     const response = await fetch(
     path.join(host, '/za/v1/cards/',cardkey.toString(),'/environmentvariables'), {
         method: 'GET',
@@ -90,11 +128,18 @@ async function fetchEnv(cardkey, host, token) {
         }
         throw new Error(response.statusText);
     }
-    const result = await response.json();
+    const result = await response.json() as EnvResponse;
     return result.data.result.variables;
 }
 
-async function fetchCode(cardkey, host, token) {
+interface CodeResponse {
+    data: {
+        cardCode: {
+            code: string;
+        };
+    }
+}
+export async function fetchCode(cardkey: number, host: string, token: string) {
     const response = await fetch(
     path.join(host, '/za/v1/cards/',cardkey.toString(),'/code'), {
         method: 'GET',
@@ -109,15 +154,6 @@ async function fetchCode(cardkey, host, token) {
         }
         throw new Error(response.statusText);
     }
-    const result = await response.json();
+    const result: CodeResponse = await response.json() as CodeResponse;
     return result.data.cardCode.code;
 }
-
-module.exports = {
-    getAccessToken: getAccessToken,
-    uploadEnv: uploadEnv,
-    uploadCode: uploadCode,
-    fetchCards: fetchCards,
-    fetchEnv: fetchEnv,
-    fetchCode: fetchCode
-  };
