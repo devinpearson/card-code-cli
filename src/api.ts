@@ -52,15 +52,7 @@ export async function uploadEnv(cardkey: number, env: string, host: string, toke
     return result;
 }
 
-interface UploadCodeResponse {
-    data: {
-        cardCode: {
-            code: string;
-        };
-    };
-}
-
-export async function uploadCode(cardkey: number, code: object, host: string, token: string): Promise<UploadCodeResponse> {
+export async function uploadCode(cardkey: number, code: object, host: string, token: string): Promise<CodeResponse> {
     if (!cardkey || !code || !host || !token) {
         throw new Error('Missing required parameters');
     }
@@ -79,7 +71,7 @@ export async function uploadCode(cardkey: number, code: object, host: string, to
         }
         throw new Error(response.statusText);
     }
-    const result: UploadCodeResponse = await response.json() as CodeResponse;
+    const result = await response.json() as CodeResponse;
     return result;
 }
 interface Card {
@@ -93,9 +85,7 @@ interface Card {
 }
 interface CardResponse{
     "data": {
-        "cards": [
-            Card
-        ]
+        "cards": Card[]
     }
 }
 export async function fetchCards(host: string, token: string) {
@@ -122,7 +112,7 @@ interface EnvVars {
 interface EnvResponse {
     "data": {
         "result": {
-            "variables": [EnvVars],
+            "variables": EnvVars,
             "createdAt": string,
             "updatedAt": string,
             "error": null
