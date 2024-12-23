@@ -58,25 +58,26 @@ docker run card-emu -t petrol_card
 ```
 ![](./media/docker-example.gif)
 
-## Usage
-
-```bash
-npm run dev
-```
-
 ### Usage
+Commands:
+    run                              run your code locally
+    fetch-cards                      List cards
+    fetch [cardkey] [filename]       fetches your code
+    fetch-env [cardkey] [filename]   fetches your environmental variables
+    upload [cardkey] [filename]      pushes your code
+    upload-env [cardkey] [filename]  pushes your environmental variables
 
 ![](./media/card-code-example.gif)
 
 Options:
 
-`-t, --template [template]` The template to run
+`-e, --environment [environment]` The environment to use
 
 `-a, --amount [amount]` The amount of the transaction
 
 `-c, --currency [currency]` The currency of the transaction
 
-`-e, --mcc [mcc]` The merchant category code of the transaction
+`--mcc [mcc]` The merchant category code of the transaction
 
 `-m, --merchant [merchant]` The merchant name of the transaction
 
@@ -91,7 +92,7 @@ Options:
 To run a transaction against a template, run the following command:
 
 ```
-node . -t empty --amount 60000 --currency ZAR --mcc 0000 --merchant "Test Merchant" --city "Test City" --country ZA
+node . main.js -e env.json --amount 60000 --currency ZAR --mcc 0000 --merchant "Test Merchant" --city "Test City" --country ZA
 ```
 ## Testing
 

@@ -50,5 +50,5 @@ describe("cli", () => {
     ];
   
     // Require the yargs CLI script
-    return require("../bin/index");
+    return require("../src/index");
   }
