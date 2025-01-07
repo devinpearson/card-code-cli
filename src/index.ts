@@ -108,7 +108,7 @@ yargs(hideBin(process.argv))
             await fs.writeFileSync(argv.filename, result);
         } catch (err) {
             if (err instanceof Error) {
-                console.log(chalk.red(err.message));
+                console.log(chalk.red(err.message, err.stack));
             } else {
                 console.log(chalk.red('An unknown error occurred'));
             }
