@@ -7,7 +7,7 @@ import { run, createTransaction} from 'programmable-card-code-emulator'
 import chalk from 'chalk'
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
-import { getAccessToken, fetchCode, uploadCode, fetchEnv, uploadEnv, fetchCards} from './api.js'
+import { getAccessToken, fetchCode, uploadCode, fetchEnv, uploadEnv, fetchCards, toggleCode, fetchPublishedCode, uploadPublishedCode} from './api.js'
 
 const host = process.env.host || '';
 const clientId = process.env.clientId || '';
@@ -105,7 +105,7 @@ yargs(hideBin(process.argv))
             console.log('fetching code');
             const result = await fetchCode(argv.cardkey, host, token)
             console.log(result);
-            await fs.writeFileSync(argv.filename, result);
+            await fs.writeFileSync(argv.filename, result.code);
         } catch (err) {
             if (err instanceof Error) {
                 console.log(chalk.red(err.message, err.stack));
@@ -114,6 +114,36 @@ yargs(hideBin(process.argv))
             }
         }
     }
+    })
+    .command('fetch-published [cardkey] [filename]', 'fetches your published code', {
+        builder: (yargs) => {
+          return yargs
+            .positional('cardkey', {
+              type: 'number',
+              default: 700615,
+              describe: 'the cardkey'
+            })
+            .positional('filename', {
+              type: 'string',
+              default: 'data/main.js',
+              describe: 'the filename'
+            });
+        },
+        handler: async function (argv) {
+            try {
+                const token = await getAccessToken(host, clientId, secret, apikey)
+                console.log('fetching code');
+                const result = await fetchPublishedCode(argv.cardkey, host, token)
+                console.log(result);
+                await fs.writeFileSync(argv.filename, result);
+            } catch (err) {
+                if (err instanceof Error) {
+                    console.log(chalk.red(err.message, err.stack));
+                } else {
+                    console.log(chalk.red('An unknown error occurred'));
+                }
+            }
+        }
     })
   .command('fetch-env [cardkey] [filename]', 'fetches your environmental variables', {
     builder: (yargs) => {
@@ -175,6 +205,43 @@ yargs(hideBin(process.argv))
         }
     }
   }})
+  .command('publish [cardkey] [codeid] [filename]', 'pushes your published code', {
+    builder: (yargs) => {
+      return yargs
+        .positional('cardkey', {
+          type: 'number',
+          default: 700615,
+          describe: 'the cardkey'
+        })
+        .positional('codeid', {
+            type: 'string',
+            default: '',
+            describe: 'the saved code id'
+          })
+        .positional('filename', {
+          type: 'string',
+          default: 'data/main.js',
+          describe: 'the filename'
+        });
+    },
+    handler: async function (argv: CodePublish) {
+    try {
+        if (!fs.existsSync(argv.filename)) {
+            throw new Error('File does not exist');
+        }
+        const token = await getAccessToken(host, clientId, secret, apikey)
+        console.log('uploading code');
+        const code = fs.readFileSync(argv.filename).toString();
+        const result = await uploadPublishedCode(argv.cardkey, argv.codeid, code, host, token)
+        console.log(result);
+    } catch (err) {
+        if (err instanceof Error) {
+            console.log(chalk.red(err.message));
+        } else {
+            console.log(chalk.red('An unknown error occurred'));
+        }
+    }
+  }})
   .command('upload-env [cardkey] [filename]', 'pushes your environmental variables', {
     builder: (yargs) => {
       return yargs
@@ -210,6 +277,38 @@ yargs(hideBin(process.argv))
         }
     }
   }})
+  .command('toggle [cardkey] [enabled]', 'enable/disable card code', {
+    builder: (yargs) => {
+      return yargs
+        .positional('cardkey', {
+          type: 'number',
+          default: 700615,
+          describe: 'the cardkey'
+        })
+        .positional('enabled', {
+          type: 'boolean',
+          default: true,
+          describe: 'Whether the card is enabled or not'
+        });
+    },
+    handler: async function (argv: CodeToggle) {
+    try {
+        const token = await getAccessToken(host, clientId, secret, apikey)
+        console.log('toggle code');
+        let enabled = false;
+        if (argv.enabled) {
+            enabled = true;
+        }
+        const result = await toggleCode(argv.cardkey, enabled, host, token)
+        console.log(result);
+    } catch (err) {
+        if (err instanceof Error) {
+            console.log(chalk.red(err.message));
+        } else {
+            console.log(chalk.red('An unknown error occurred'));
+        }
+    }
+  }})
   .help('h')
   .alias('h', 'help')
   .alias('v', 'version').argv;
@@ -217,6 +316,16 @@ yargs(hideBin(process.argv))
   interface UploadEnv {
     filename: string;
     cardkey: number;
+  }
+
+  interface CodeToggle{
+    enabled: boolean;
+    cardkey: number;
+  }
+  interface CodePublish {
+    filename: string;
+    cardkey: number;
+    codeid: string;
   }
 
 (async () => {
