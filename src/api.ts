@@ -225,7 +225,7 @@ interface CodeToggle {
     data: { result: { Enabled: boolean } }
 }
 export async function toggleCode(cardkey: number, enabled: boolean, host: string, token: string) {
-    if (!cardkey || !host || !token || !enabled) {
+    if (!cardkey || !host || !token || enabled === undefined) {
         throw new Error('Missing required parameters');
     }
     const endpoint = createEndpoint(host, `/za/v1/cards/${encodeURIComponent(cardkey.toString())}/toggle-programmable-feature`);
