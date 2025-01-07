@@ -31,18 +31,13 @@ export async function getAccessToken(host: string, clientId: string, secret: str
     return result.access_token;
 };
 
-export async function uploadEnv(cardkey: number, env: string, host: string, token: string) {
-    if (!cardkey || !env || !host || !token) {
-        throw new Error('Missing required parameters');
-    }
-    const endpoint = createEndpoint(host, `/za/v1/cards/${encodeURIComponent(cardkey.toString())}/environmentvariables`);
+async function fetchGet(endpoint: string, token: string) {
     const response = await fetch(endpoint, {
-        method: 'POST',
+        method: 'GET',
         headers: {
             "Authorization": "Bearer " + token,
             "content-type": "application/json"
         },
-        body: env,
     });
     if (response.status !== 200) {
         if (response.status === 404) {
@@ -50,8 +45,35 @@ export async function uploadEnv(cardkey: number, env: string, host: string, toke
         }
         throw new Error(response.statusText);
     }
-    const result = await response.json() as EnvResponse;
+    const result = await response.json();
     return result;
+}
+
+async function fetchPost(endpoint: string, token: string, body: object) {
+    const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+            "Authorization": "Bearer " + token,
+            "content-type": "application/json"
+        },
+        body: JSON.stringify(body),
+    });
+    if (response.status !== 200) {
+        if (response.status === 404) {
+            throw new Error('Card not found');
+        }
+        throw new Error(response.statusText);
+    }
+    const result = await response.json();
+    return result;
+}
+
+export async function uploadEnv(cardkey: number, env: object, host: string, token: string) {
+    if (!cardkey || !env || !host || !token) {
+        throw new Error('Missing required parameters');
+    }
+    const endpoint = createEndpoint(host, `/za/v1/cards/${encodeURIComponent(cardkey.toString())}/environmentvariables`);
+    return fetchPost(endpoint, token, env);
 }
 
 export async function uploadCode(cardkey: number, code: object, host: string, token: string): Promise<CodeResponse> {
@@ -59,22 +81,7 @@ export async function uploadCode(cardkey: number, code: object, host: string, to
         throw new Error('Missing required parameters');
     }
     const endpoint = createEndpoint(host, `/za/v1/cards/${encodeURIComponent(cardkey.toString())}/code`);
-    const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-            "Authorization": "Bearer " + token,
-            "content-type": "application/json"
-        },
-        body: JSON.stringify(code),
-    });
-    if (response.status !== 200) {
-        if (response.status === 404) {
-            throw new Error('Card not found');
-        }
-        throw new Error(response.statusText);
-    }
-    const result = await response.json() as CodeResponse;
-    return result;
+    return fetchPost(endpoint, token, code) as Promise<CodeResponse>;
 }
 
 export async function uploadPublishedCode(cardkey: number, codeid: string, code: string, host: string, token: string): Promise<CodeResponse> {
@@ -83,22 +90,7 @@ export async function uploadPublishedCode(cardkey: number, codeid: string, code:
     }
     const raw = {"code": code, "codeId": codeid};
     const endpoint = createEndpoint(host, `/za/v1/cards/${encodeURIComponent(cardkey.toString())}/publish`);
-    const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-            "Authorization": "Bearer " + token,
-            "content-type": "application/json"
-        },
-        body: JSON.stringify(raw),
-    });
-    if (response.status !== 200) {
-        if (response.status === 404) {
-            throw new Error('Card not found');
-        }
-        throw new Error(response.statusText);
-    }
-    const result = await response.json() as CodeResponse;
-    return result;
+    return fetchPost(endpoint, token, raw) as Promise<CodeResponse>;
 }
 interface Card {
     "CardKey": number
@@ -119,17 +111,7 @@ export async function fetchCards(host: string, token: string) {
         throw new Error('Missing required parameters');
     }
     const endpoint = createEndpoint(host, `/za/v1/cards`);
-    const response = await fetch(endpoint, {
-        method: 'GET',
-        headers: {
-            "Authorization": "Bearer " + token,
-            "content-type": "application/json"
-        },
-    });
-    if (response.status !== 200) {
-        throw new Error(response.statusText);
-    }
-    const result = await response.json() as CardResponse;
+    const result = await fetchGet(endpoint, token) as CardResponse;
     return result.data.cards;
 }
 interface EnvVars {
@@ -151,20 +133,7 @@ export async function fetchEnv(cardkey: number, host: string, token: string) {
         throw new Error('Missing required parameters');
     }
     const endpoint = createEndpoint(host, `/za/v1/cards/${encodeURIComponent(cardkey.toString())}/environmentvariables`);
-    const response = await fetch(endpoint, {
-        method: 'GET',
-        headers: {
-            "Authorization": "Bearer " + token,
-            "content-type": "application/json"
-        },
-    });
-    if (response.status !== 200) {
-        if (response.status === 404) {
-            throw new Error('Card not found');
-        }
-        throw new Error(response.statusText);
-    }
-    const result = await response.json() as EnvResponse;
+    const result = await fetchGet(endpoint, token) as EnvResponse;
     return result.data.result.variables;
 }
 
@@ -180,45 +149,16 @@ export async function fetchCode(cardkey: number, host: string, token: string) {
         throw new Error('Missing required parameters');
     }
     const endpoint = createEndpoint(host, `/za/v1/cards/${encodeURIComponent(cardkey.toString())}/code`);
-    const response = await fetch(endpoint, {
-        method: 'GET',
-        headers: {
-            "Authorization": "Bearer " + token,
-            "content-type": "application/json"
-        },
-    });
-    
-    if (response.status !== 200) {
-        if (response.status === 404) {
-            throw new Error('Card not found');
-        }
-        throw new Error(response.status + ": " + response.statusText);
-    }
-    
-    const result: CodeResponse = await response.json() as CodeResponse;
+    const result = await fetchGet(endpoint, token) as CodeResponse;
     return result.data.result;
 }
+
 export async function fetchPublishedCode(cardkey: number, host: string, token: string) {
     if (!cardkey || !host || !token) {
         throw new Error('Missing required parameters');
     }
     const endpoint = createEndpoint(host, `/za/v1/cards/${encodeURIComponent(cardkey.toString())}/publishedcode`);
-    const response = await fetch(endpoint, {
-        method: 'GET',
-        headers: {
-            "Authorization": "Bearer " + token,
-            "content-type": "application/json"
-        },
-    });
-    
-    if (response.status !== 200) {
-        if (response.status === 404) {
-            throw new Error('Card not found');
-        }
-        throw new Error(response.status + ": " + response.statusText);
-    }
-    
-    const result: CodeResponse = await response.json() as CodeResponse;
+    const result = await fetchGet(endpoint, token) as CodeResponse;
     return result.data.result.code;
 }
 interface CodeToggle {
@@ -229,24 +169,7 @@ export async function toggleCode(cardkey: number, enabled: boolean, host: string
         throw new Error('Missing required parameters');
     }
     const endpoint = createEndpoint(host, `/za/v1/cards/${encodeURIComponent(cardkey.toString())}/toggle-programmable-feature`);
-    const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-            "Authorization": "Bearer " + token,
-            "content-type": "application/json"
-        },
-        body: JSON.stringify({Enabled: enabled}),
-    });
-    
-    if (response.status !== 200) {
-        if (response.status === 404) {
-            throw new Error('Card not found');
-        }
-        throw new Error(response.status + ": " + response.statusText);
-    }
-    
-    const result = await response.json() as CodeToggle;
-
+    const result = await fetchPost(endpoint, token, {Enabled: enabled}) as CodeToggle;
     return result.data.result.Enabled;
 }
 
@@ -258,21 +181,6 @@ export async function fetchExecutions(cardkey: number, host: string, token: stri
         throw new Error('Missing required parameters');
     }
     const endpoint = createEndpoint(host, `/za/v1/cards/${encodeURIComponent(cardkey.toString())}/code/executions`);
-    const response = await fetch(endpoint, {
-        method: 'GET',
-        headers: {
-            "Authorization": "Bearer " + token,
-            "content-type": "application/json"
-        },
-    });
-    
-    if (response.status !== 200) {
-        if (response.status === 404) {
-            throw new Error('Card not found');
-        }
-        throw new Error(response.status + ": " + response.statusText);
-    }
-    
-    const result = await response.json() as ExecutionResult;
+    const result = await fetchGet(endpoint, token) as ExecutionResult;
     return result;
 }

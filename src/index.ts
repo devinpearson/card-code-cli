@@ -267,7 +267,7 @@ yargs(hideBin(process.argv))
         const raw = {"variables": {}}
         const variables = fs.readFileSync(argv.filename, 'utf8');
         raw.variables = JSON.parse(variables);
-        const result = await uploadEnv(argv.cardkey, JSON.stringify(raw), host, token)
+        const result = await uploadEnv(argv.cardkey, raw, host, token)
         console.log(result);
     } catch (err) {
         if (err instanceof Error) {
