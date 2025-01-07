@@ -78,7 +78,7 @@ export async function uploadCode(cardkey: number, code: object, host: string, to
 }
 
 export async function uploadPublishedCode(cardkey: number, codeid: string, code: string, host: string, token: string): Promise<CodeResponse> {
-    if (!cardkey || !code || !host || !token) {
+    if (!cardkey || !codeid || !code || !host || !token) {
         throw new Error('Missing required parameters');
     }
     const raw = {"code": code, "codeId": codeid};
