@@ -7,7 +7,7 @@ import { run, createTransaction} from 'programmable-card-code-emulator'
 import chalk from 'chalk'
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
-import { getAccessToken, fetchCode, uploadCode, fetchEnv, uploadEnv, fetchCards, toggleCode, fetchPublishedCode, uploadPublishedCode} from './api.js'
+import { getAccessToken, fetchCode, uploadCode, fetchEnv, uploadEnv, fetchCards, toggleCode, fetchPublishedCode, uploadPublishedCode, fetchExecutions} from './api.js'
 
 const host = process.env.host || '';
 const clientId = process.env.clientId || '';
@@ -309,6 +309,35 @@ yargs(hideBin(process.argv))
         }
     }
   }})
+  .command('executions [cardkey] [filename]', 'card execution logs', {
+    builder: (yargs) => {
+      return yargs
+        .positional('cardkey', {
+          type: 'number',
+          default: 700615,
+          describe: 'the cardkey'
+        })
+        .positional('filename', {
+            type: 'string',
+            default: 'executions.json',
+            describe: 'the filename'
+        });
+    },
+    handler: async function (argv: Executions) {
+    try {
+        const token = await getAccessToken(host, clientId, secret, apikey)
+        console.log('fetching execution items');
+        const result = await fetchExecutions(argv.cardkey, host, token)
+        console.log(result.data.result.executionItems);
+        fs.writeFileSync(argv.filename, JSON.stringify(result.data.result.executionItems));
+    } catch (err) {
+        if (err instanceof Error) {
+            console.log(chalk.red(err.message));
+        } else {
+            console.log(chalk.red('An unknown error occurred'));
+        }
+    }
+    }})
   .help('h')
   .alias('h', 'help')
   .alias('v', 'version').argv;
@@ -326,6 +355,10 @@ yargs(hideBin(process.argv))
     filename: string;
     cardkey: number;
     codeid: string;
+  }
+  interface Executions {
+    filename: string;
+    cardkey: number;
   }
 
 (async () => {

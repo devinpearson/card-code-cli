@@ -249,3 +249,30 @@ export async function toggleCode(cardkey: number, enabled: boolean, host: string
 
     return result.data.result.Enabled;
 }
+
+interface ExecutionResult {
+    data: { result: { executionItems: [], error: null } }
+}
+export async function fetchExecutions(cardkey: number, host: string, token: string) {
+    if (!cardkey || !host || !token) {
+        throw new Error('Missing required parameters');
+    }
+    const endpoint = createEndpoint(host, `/za/v1/cards/${encodeURIComponent(cardkey.toString())}/code/executions`);
+    const response = await fetch(endpoint, {
+        method: 'GET',
+        headers: {
+            "Authorization": "Bearer " + token,
+            "content-type": "application/json"
+        },
+    });
+    
+    if (response.status !== 200) {
+        if (response.status === 404) {
+            throw new Error('Card not found');
+        }
+        throw new Error(response.status + ": " + response.statusText);
+    }
+    
+    const result = await response.json() as ExecutionResult;
+    return result;
+}
