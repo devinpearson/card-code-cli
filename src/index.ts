@@ -226,6 +226,9 @@ yargs(hideBin(process.argv))
     },
     handler: async function (argv: CodePublish) {
     try {
+        if (!fs.existsSync(argv.filename)) {
+            throw new Error('File does not exist');
+        }
         const token = await getAccessToken(host, clientId, secret, apikey)
         console.log('uploading code');
         const code = fs.readFileSync(argv.filename).toString();
@@ -283,8 +286,8 @@ yargs(hideBin(process.argv))
           describe: 'the cardkey'
         })
         .positional('enabled', {
-          type: 'string',
-          default: 'true',
+          type: 'boolean',
+          default: true,
           describe: 'Whether the card is enabled or not'
         });
     },
@@ -293,7 +296,7 @@ yargs(hideBin(process.argv))
         const token = await getAccessToken(host, clientId, secret, apikey)
         console.log('toggle code');
         let enabled = false;
-        if (argv.enabled == 'true') {
+        if (argv.enabled) {
             enabled = true;
         }
         const result = await toggleCode(argv.cardkey, enabled, host, token)
@@ -316,7 +319,7 @@ yargs(hideBin(process.argv))
   }
 
   interface CodeToggle{
-    enabled: string;
+    enabled: boolean;
     cardkey: number;
   }
   interface CodePublish {
