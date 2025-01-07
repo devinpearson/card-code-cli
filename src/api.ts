@@ -1,4 +1,6 @@
 import path from 'path'
+import fetch from 'node-fetch'
+
 interface AuthResponse {
         access_token: string,
         token_type: string
@@ -144,13 +146,14 @@ export async function fetchEnv(cardkey: number, host: string, token: string) {
 
 interface CodeResponse {
     data: {
-        cardCode: {
+        result: {
             code: string;
         };
     }
 }
 export async function fetchCode(cardkey: number, host: string, token: string) {
     if (!cardkey || !host || !token) {
+        console.log('Missing required parameters');
         throw new Error('Missing required parameters');
     }
     const endpoint = createEndpoint(host, `/za/v1/cards/${encodeURIComponent(cardkey.toString())}/code`);
@@ -161,12 +164,14 @@ export async function fetchCode(cardkey: number, host: string, token: string) {
             "content-type": "application/json"
         },
     });
+    
     if (response.status !== 200) {
         if (response.status === 404) {
             throw new Error('Card not found');
         }
-        throw new Error(response.statusText);
+        throw new Error(response.status + ": " + response.statusText);
     }
+    
     const result: CodeResponse = await response.json() as CodeResponse;
-    return result.data.cardCode.code;
+    return result.data.result.code;
 }
