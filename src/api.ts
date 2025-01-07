@@ -78,7 +78,7 @@ export async function uploadCode(cardkey: number, code: object, host: string, to
 }
 
 export async function uploadPublishedCode(cardkey: number, codeid: string, code: string, host: string, token: string): Promise<CodeResponse> {
-    if (!cardkey || !code || !host || !token) {
+    if (!cardkey || !codeid || !code || !host || !token) {
         throw new Error('Missing required parameters');
     }
     const raw = {"code": code, "codeId": codeid};
@@ -225,7 +225,7 @@ interface CodeToggle {
     data: { result: { Enabled: boolean } }
 }
 export async function toggleCode(cardkey: number, enabled: boolean, host: string, token: string) {
-    if (!cardkey || !host || !token || !enabled) {
+    if (!cardkey || !host || !token || enabled === undefined) {
         throw new Error('Missing required parameters');
     }
     const endpoint = createEndpoint(host, `/za/v1/cards/${encodeURIComponent(cardkey.toString())}/toggle-programmable-feature`);
