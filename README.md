@@ -60,12 +60,20 @@ docker run card-emu -t petrol_card
 
 ### Usage
 Commands:
-    run                              run your code locally
-    fetch-cards                      List cards
-    fetch [cardkey] [filename]       fetches your code
-    fetch-env [cardkey] [filename]   fetches your environmental variables
-    upload [cardkey] [filename]      pushes your code
-    upload-env [cardkey] [filename]  pushes your environmental variables
+  run [filename]                         run your code locally
+  fetch-cards                           list cards
+  fetch [cardkey] [filename]             fetches your saved code
+  fetch-published [cardkey] [filename]   fetches your published code
+  fetch-env [cardkey] [filename]         fetches your environmental variables
+  upload [cardkey] [filename]            uploads your code to saved code
+  publish [cardkey] [codeid] [filename]  publishes your saved code
+  upload-env [cardkey] [filename]        publishes your environmental variables
+  toggle [cardkey] [enabled]            enable/disable card code
+  executions [cardkey] [filename]        card execution logs
+
+Options:
+  -h, --help     Show help                                             [boolean]
+  -v, --version  Show version number                                   [boolean]
 
 ![](./media/card-code-example.gif)
 

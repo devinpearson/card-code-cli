@@ -69,10 +69,9 @@ yargs(hideBin(process.argv))
     // console.log(argv)
     runTemplate(argv)
   })
-  .command('fetch-cards', 'List cards', (yargs) => {
+  .command('fetch-cards', 'list cards', (yargs) => {
   }, async function (argv) {
     try {
-        // console.log(path.join(__dirname, '..'));
         const token = await getAccessToken(host, clientId, secret, apikey)
         console.log('fetching cards');
         const result = await fetchCards(host, token)
@@ -85,7 +84,7 @@ yargs(hideBin(process.argv))
         }
     }
   })
-  .command('fetch [cardkey] [filename]', 'fetches your code', {
+  .command('fetch [cardkey] [filename]', 'fetches your saved code', {
     builder: (yargs) => {
       return yargs
         .positional('cardkey', {
@@ -165,7 +164,7 @@ yargs(hideBin(process.argv))
         console.log('fetching envs');
         const result = await fetchEnv(argv.cardkey, host, token)
         console.log(result);
-        fs.writeFileSync(argv.filename, JSON.stringify(result));
+        fs.writeFileSync(argv.filename, JSON.stringify(result, null, 4));
     } catch (err) {
         if (err instanceof Error) {
             console.log(chalk.red(err.message));
@@ -174,7 +173,7 @@ yargs(hideBin(process.argv))
         }
     }
   }})
-  .command('upload [cardkey] [filename]', 'pushes your code', {
+  .command('upload [cardkey] [filename]', 'uploads your code to saved code', {
     builder: (yargs) => {
       return yargs
         .positional('cardkey', {
@@ -205,7 +204,7 @@ yargs(hideBin(process.argv))
         }
     }
   }})
-  .command('publish [cardkey] [codeid] [filename]', 'pushes your published code', {
+  .command('publish [cardkey] [codeid] [filename]', 'publishes your saved code', {
     builder: (yargs) => {
       return yargs
         .positional('cardkey', {
@@ -242,7 +241,7 @@ yargs(hideBin(process.argv))
         }
     }
   }})
-  .command('upload-env [cardkey] [filename]', 'pushes your environmental variables', {
+  .command('upload-env [cardkey] [filename]', 'publishes your environmental variables', {
     builder: (yargs) => {
       return yargs
         .positional('cardkey', {
@@ -295,11 +294,7 @@ yargs(hideBin(process.argv))
     try {
         const token = await getAccessToken(host, clientId, secret, apikey)
         console.log('toggle code');
-        let enabled = false;
-        if (argv.enabled) {
-            enabled = true;
-        }
-        const result = await toggleCode(argv.cardkey, enabled, host, token)
+        const result = await toggleCode(argv.cardkey, argv.enabled, host, token)
         console.log(result);
     } catch (err) {
         if (err instanceof Error) {
@@ -329,7 +324,7 @@ yargs(hideBin(process.argv))
         console.log('fetching execution items');
         const result = await fetchExecutions(argv.cardkey, host, token)
         console.log(result.data.result.executionItems);
-        fs.writeFileSync(argv.filename, JSON.stringify(result.data.result.executionItems));
+        fs.writeFileSync(argv.filename, JSON.stringify(result.data.result.executionItems, null, 4));
     } catch (err) {
         if (err instanceof Error) {
             console.log(chalk.red(err.message));
