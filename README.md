@@ -1,3 +1,5 @@
+⚠️ This project is being achieved in favour of the ipb version. All new development will continue there and this project will be archived
+
 # CLI Programmable Card Code Emulator
 
 Write and test programmable card code in a safe environment.
