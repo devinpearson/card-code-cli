@@ -1,6 +1,6 @@
 {
   "name": "investec-card-cli",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "main": "bin/index.js",
   "bin": {
     "card-emu": "./bin/index.js"
@@ -8,7 +8,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "test": "vitest",
+    "test": "vitest run",
     "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
     "check-format": "prettier --check .",
     "ci": "npm run build && npm run check-format && npm run check-exports && npm run test",
@@ -30,14 +30,14 @@
     "chalk": "^4.1.2",
     "dotenv": "^16.3.1",
     "node-fetch": "^3.3.2",
-    "programmable-card-code-emulator": "^1.4.2",
+    "programmable-card-code-emulator": "^2.0.1",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.17.2",
     "@types/yargs": "^17.0.33",
     "prettier": "3.0.3",
-    "vitest": "^2.1.8"
+    "vitest": "^4.1.10"
   },
   "files": [
     "bin"
