@@ -400,9 +400,8 @@ async function runTemplate(argv: any) {
   const template = argv.filename;
   const templatePath = path.join(path.resolve(), template);
   if (!fs.existsSync(templatePath)) {
-    // The template doesnt exist, process exit
-    console.log(chalk.red(`Template ${template} does not exist`));
-    process.exit(0);
+    console.error(chalk.red(`Template ${template} does not exist`));
+    process.exit(1);
   }
   console.log(chalk.white(`Running template:`), chalk.blueBright(template));
   const transaction = createTransaction(
@@ -420,9 +419,16 @@ async function runTemplate(argv: any) {
   console.log(chalk.blue(`merchant city:`), chalk.green(transaction.merchant.city));
   console.log(chalk.blue(`merchant country:`), chalk.green(transaction.merchant.country.code));
   // Read the template env.json file and replace the values with the process.env values
-  let environmentvariables = JSON.parse(
-    fs.readFileSync(path.join(path.resolve(), argv.environment), 'utf8')
-  );
+  let environmentvariables;
+  try {
+    environmentvariables = JSON.parse(
+      fs.readFileSync(path.join(path.resolve(), argv.environment), 'utf8')
+    );
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'An unknown error occurred';
+    console.error(chalk.red(message));
+    process.exit(1);
+  }
   for (const key in environmentvariables) {
     if (`${key}` in process.env) {
       environmentvariables[`${key}`] = process.env[`${key}`];

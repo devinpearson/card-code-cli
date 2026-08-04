@@ -176,15 +176,15 @@ describe('cli run', () => {
   });
 
   it('reports when the template file does not exist', async () => {
-    const { stdout, exitCode } = await runCli([
+    const { stdout, stderr, exitCode } = await runCli([
       'run',
       'missing.js',
       '-e',
       'templates/empty/env.json',
     ]);
 
-    expect(exitCode).toBe(0);
-    expect(stdout).toContain('Template missing.js does not exist');
+    expect(exitCode).toBe(1);
+    expect(stderr).toContain('Template missing.js does not exist');
     expect(stdout).not.toContain('Running template:');
   });
 
@@ -198,8 +198,8 @@ describe('cli run', () => {
 
     expect(exitCode).toBe(1);
     expect(stdout).toContain('Running template:');
-    expect(`${stdout}\n${stderr}`).toMatch(/ENOENT|no such file or directory/i);
-    expect(`${stdout}\n${stderr}`).toContain('missing-env.json');
+    expect(stderr).toMatch(/ENOENT|no such file or directory/i);
+    expect(stderr).toContain('missing-env.json');
   });
 });
 
