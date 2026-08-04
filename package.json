@@ -1,6 +1,6 @@
 {
   "name": "investec-card-cli",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "main": "bin/index.js",
   "bin": {
     "card-emu": "./bin/index.js"
@@ -26,6 +26,10 @@
   "author": "Devin Pearson",
   "license": "MIT",
   "description": "An emulator for the Programmable Card Code Lamda function",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/devinpearson/card-code-cli.git"
+  },
   "dependencies": {
     "chalk": "^4.1.2",
     "dotenv": "^16.3.1",
