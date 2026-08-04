@@ -11,31 +11,31 @@ name: 'card-cli'
 # [Manfred, 21apr2023]
 
 services:
-   # change the service name, the container name and the hostname for each dev container that connects
-   # to the same virtual network. [Manfred, 29jul2022]
-   card-cli:
-      image: typescript-dev:0.1
-      build: .
-      container_name: card-cli
-      hostname: card-cli.local
-      working_dir: /work
-      ports:
-         # Change the port number in case you have more than one dev container based on this
-         # template. For example, you could use something like:
-         # - "3100:3000"
-         # [Manfred, 29jul2022]
-         - "3100:3000" # <<<<<< if preferred, explicit forward the port used by express
-         # Using double quotes for port mapping to avoid YAML reading it as a number with a different base
-         # e.g. "3333:22" would result in port numbers greater than 130000 which are clearly invalid.
-         # Without double quotes YAML interprets it as a number based on 22. [Manfred, 24aug2022]
-      volumes:
-         - ..:/work
-      command: bash -c "/work/.devcontainer/init.sh && sleep infinity"
-      networks:
-         card-cli:
+  # change the service name, the container name and the hostname for each dev container that connects
+  # to the same virtual network. [Manfred, 29jul2022]
+  card-cli:
+    image: typescript-dev:0.1
+    build: .
+    container_name: card-cli
+    hostname: card-cli.local
+    working_dir: /work
+    ports:
+      # Change the port number in case you have more than one dev container based on this
+      # template. For example, you could use something like:
+      # - "3100:3000"
+      # [Manfred, 29jul2022]
+      - '3100:3000' # <<<<<< if preferred, explicit forward the port used by express
+      # Using double quotes for port mapping to avoid YAML reading it as a number with a different base
+      # e.g. "3333:22" would result in port numbers greater than 130000 which are clearly invalid.
+      # Without double quotes YAML interprets it as a number based on 22. [Manfred, 24aug2022]
+    volumes:
+      - ..:/work
+    command: bash -c "/work/.devcontainer/init.sh && sleep infinity"
+    networks:
+      card-cli:
 
-   # If you list further services (ie containers) here, place them in the same virtual network if
-   # you want them being visible to each other. [Manfred, 10sep2022]
+  # If you list further services (ie containers) here, place them in the same virtual network if
+  # you want them being visible to each other. [Manfred, 10sep2022]
 
 networks:
-   card-cli:
+  card-cli:
