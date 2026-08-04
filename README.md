@@ -7,6 +7,7 @@ Write and test programmable card code in a safe environment.
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Table of Contents
+
 - [About](#about)
 - [Templates](#templates)
 - [Installation](#installation)
@@ -37,45 +38,40 @@ Current Templates:
 - `postman-echo` - A template for sending a transaction to [Postman Echo](https://learning.postman.com/docs/developer/echo-api/)
 
 ## Installation
+
 Before installing, [download and install Node.js](https://nodejs.org/en/download/).
 
 ```bash
 git clone https://github.com/devinpearson/programmable-banking-card-issuer.git
 cd programmable-banking-card-issuer
 ```
+
 ```bash
 npm install
 ```
+
 ## DevContainer (VSCode)
-VS Code will automatically detect the `.devcontainer` folder and prompt you to open the project in a container. This will set up the environment for you to run the server in a Docker container. 
+
+VS Code will automatically detect the `.devcontainer` folder and prompt you to open the project in a container. This will set up the environment for you to run the server in a Docker container.
+
 ```bash
 docker-compose -f .devcontainer/docker-compose.yml up
 ```
 
 ## Docker
-    
+
 ```bash
 docker build -t card-emu .
 docker run card-emu -t petrol_card
 ```
+
 ![](./media/docker-example.gif)
 
 ### Usage
-Commands:
-  run [filename]                         run your code locally
-  fetch-cards                           list cards
-  fetch [cardkey] [filename]             fetches your saved code
-  fetch-published [cardkey] [filename]   fetches your published code
-  fetch-env [cardkey] [filename]         fetches your environmental variables
-  upload [cardkey] [filename]            uploads your code to saved code
-  publish [cardkey] [codeid] [filename]  publishes your saved code
-  upload-env [cardkey] [filename]        publishes your environmental variables
-  toggle [cardkey] [enabled]            enable/disable card code
-  executions [cardkey] [filename]        card execution logs
 
-Options:
-  -h, --help     Show help                                             [boolean]
-  -v, --version  Show version number                                   [boolean]
+Commands: run [filename] run your code locally fetch-cards list cards fetch [cardkey] [filename] fetches your saved code fetch-published [cardkey] [filename] fetches your published code fetch-env [cardkey] [filename] fetches your environmental variables upload [cardkey] [filename] uploads your code to saved code publish [cardkey] [codeid] [filename] publishes your saved code upload-env [cardkey] [filename] publishes your environmental variables toggle [cardkey] [enabled] enable/disable card code executions [cardkey] [filename] card execution logs
+
+Options: -h, --help Show help [boolean] -v, --version Show version number [boolean]
 
 ![](./media/card-code-example.gif)
 
@@ -104,12 +100,15 @@ To run a transaction against a template, run the following command:
 ```
 node . main.js -e env.json --amount 60000 --currency ZAR --mcc 0000 --merchant "Test Merchant" --city "Test City" --country ZA
 ```
+
 ## Testing
 
 To run the tests, use the following command:
+
 ```bash
 npm test
 ```
+
 ## Contributing
 
 Contributions are welcome! Please submit a pull request or open an issue for any suggestions or improvements.
@@ -128,6 +127,7 @@ For inquiries, please open an issue.
 - [Chalk](https://github.com/chalk/chalk)
 
 ## Other Projects
+
 - [Banking API Simulator](https://github.com/devinpearson/programmable-banking-sim)
 - [Random banking data generator](https://github.com/devinpearson/programmable-banking-faker)
 - [Open Banking Point of Sales device](https://github.com/devinpearson/programmable-banking-pos)

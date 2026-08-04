@@ -26,10 +26,11 @@
 
     /* AND if you're building for a library in a monorepo: */
     "declarationMap": true,
-    "lib": ["es2022"]
+    "lib": ["es2022"],
+    "types": ["node"]
   },
   "include": ["./src/**/*"],
-    "exclude": [
-        "./bin/**/*" // This is what fixed it!
-    ]
+  "exclude": [
+    "./bin/**/*" // This is what fixed it!
+  ]
 }
